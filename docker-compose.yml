@@ -49,6 +49,7 @@ services:
        - ./mysql.conf/my.cnf:/etc/my.cnf
        - ./mysql.conf/mysql-cluster.cnf:/etc/mysql-cluster.cnf
        - /etc/localtime:/etc/localtime:ro
+       - ./data:/var/lib/mysql
 #    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: example
