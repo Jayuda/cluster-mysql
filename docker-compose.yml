@@ -1,8 +1,8 @@
-version: '2'
+version: '3.9'
 #version: '3.1'
 services:
   management1:
-    image: mysql/mysql-cluster
+    image: mysql/mysql-cluster:8.0
     volumes:
        - ./mysql.conf/my.cnf:/etc/my.cnf
        - ./mysql.conf/mysql-cluster.cnf:/etc/mysql-cluster.cnf
@@ -13,7 +13,7 @@ services:
 #        ipv4_address: 192.168.0.2
         ipv4_address: 172.28.0.2
   ndb1:
-    image: mysql/mysql-cluster
+    image: mysql/mysql-cluster:8.0
     volumes:
        - ./mysql.conf/my.cnf:/etc/my.cnf
        - ./mysql.conf/mysql-cluster.cnf:/etc/mysql-cluster.cnf
@@ -26,7 +26,7 @@ services:
 #        ipv4_address: 192.168.0.3
         ipv4_address: 172.28.0.3
   ndb2:
-    image: mysql/mysql-cluster
+    image: mysql/mysql-cluster:8.0
     volumes:
        - ./mysql.conf/my.cnf:/etc/my.cnf
        - ./mysql.conf/mysql-cluster.cnf:/etc/mysql-cluster.cnf
@@ -39,7 +39,7 @@ services:
 #        ipv4_address: 192.168.0.4
         ipv4_address: 172.28.0.4
   mysql1:
-    image: mysql/mysql-cluster
+    image: mysql/mysql-cluster:8.0
     ports:
       - "3306:3306"
     volumes:
@@ -83,4 +83,4 @@ networks:
       gateway: 172.28.5.254
 ##    - ip-range: 172.28.5.0/24
 
-#  docker run -it -v "$PWD/mysql.conf/my.cnf:/etc/my.cnf" -v "$PWD/mysql.conf/mysql-cluster.cnf:/etc/mysql-cluster.cnf" --net=mysqlcluster_mysqlcluster mysql/mysql-cluster ndb_mgm
+#  docker run -it -v "$PWD/mysql.conf/my.cnf:/etc/my.cnf" -v "$PWD/mysql.conf/mysql-cluster.cnf:/etc/mysql-cluster.cnf" --net=mysqlcluster_mysqlcluster mysql/mysql-cluster:8.0 ndb_mgm
