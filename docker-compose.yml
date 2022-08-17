@@ -1,7 +1,7 @@
 version: '3.9'
 #version: '3.1'
 services:
-  management1:
+  management:
     image: mysql/mysql-cluster:8.0
     volumes:
        - ./mysql.conf/my.cnf:/etc/my.cnf
@@ -12,7 +12,8 @@ services:
     networks:
       mysqlcluster:
 #        ipv4_address: 192.168.0.2
-        ipv4_address: 172.28.0.2
+        ipv4_address: 172.28.0.1
+
   ndb1:
     image: mysql/mysql-cluster:8.0
     volumes:
@@ -22,11 +23,11 @@ services:
     #command: bash -c 'sleep 40; exec ndbd'
     command: ndbd
     depends_on:
-      - "management1"
+      - "management"
     networks:
       mysqlcluster:
 #        ipv4_address: 192.168.0.3
-        ipv4_address: 172.28.0.3
+        ipv4_address: 172.28.0.21
   ndb2:
     image: mysql/mysql-cluster:8.0
     volumes:
@@ -36,20 +37,49 @@ services:
     #command: bash -c 'sleep 40; exec ndbd'
     command: ndbd
     depends_on:
-      - "management1"
+      - "management"
     networks:
       mysqlcluster:
 #        ipv4_address: 192.168.0.4
-        ipv4_address: 172.28.0.4
-  mysql1:
+        ipv4_address: 172.28.0.22
+  ndb3:
     image: mysql/mysql-cluster:8.0
-    ports:
-      - "3306:3306"
     volumes:
        - ./mysql.conf/my.cnf:/etc/my.cnf
        - ./mysql.conf/mysql-cluster.cnf:/etc/mysql-cluster.cnf
        - /etc/localtime:/etc/localtime:ro
-       - ./data:/var/lib/mysql
+    #command: bash -c 'sleep 40; exec ndbd'
+    command: ndbd
+    depends_on:
+      - "management"
+    networks:
+      mysqlcluster:
+#        ipv4_address: 192.168.0.4
+        ipv4_address: 172.28.0.23
+  ndb4:
+    image: mysql/mysql-cluster:8.0
+    volumes:
+       - ./mysql.conf/my.cnf:/etc/my.cnf
+       - ./mysql.conf/mysql-cluster.cnf:/etc/mysql-cluster.cnf
+       - /etc/localtime:/etc/localtime:ro
+    #command: bash -c 'sleep 40; exec ndbd'
+    command: ndbd
+    depends_on:
+      - "management"
+    networks:
+      mysqlcluster:
+#        ipv4_address: 192.168.0.4
+        ipv4_address: 172.28.0.24
+
+  mysql1:
+    image: mysql/mysql-cluster:8.0
+    ports:
+      - "2201:3306"
+    volumes:
+       - ./mysql.conf/my.cnf:/etc/my.cnf
+       - ./mysql.conf/mysql-cluster.cnf:/etc/mysql-cluster.cnf
+       - /etc/localtime:/etc/localtime:ro
+       - ./data/mysql1:/var/lib/mysql
 #    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: example
@@ -60,18 +90,79 @@ services:
     #command: bash -c 'sleep 60; exec mysqld'
     command: mysqld
     depends_on:
-      - "management1"
+      - "management"
       - "ndb1"
       - "ndb2"
+      - "ndb3"
+      - "ndb4"
     networks:
       mysqlcluster:
 #        ipv4_address: 192.168.0.10
-        ipv4_address: 172.28.0.10
+        ipv4_address: 172.28.0.11
+
+  mysql2:
+    image: mysql/mysql-cluster:8.0
+    ports:
+      - "2202:3306"
+    volumes:
+       - ./mysql.conf/my.cnf:/etc/my.cnf
+       - ./mysql.conf/mysql-cluster.cnf:/etc/mysql-cluster.cnf
+       - /etc/localtime:/etc/localtime:ro
+       - ./data/mysql2:/var/lib/mysql
+#    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: bdteste
+      MYSQL_USER: teste
+      MYSQL_PASSWORD: teste
+      MYSQL_ROOT_HOST: '%'
+    #command: bash -c 'sleep 60; exec mysqld'
+    command: mysqld
+    depends_on:
+      - "management"
+      - "ndb1"
+      - "ndb2"
+      - "ndb3"
+      - "ndb4"
+    networks:
+      mysqlcluster:
+#        ipv4_address: 192.168.0.10
+        ipv4_address: 172.28.0.12
+
+  mysql3:
+    image: mysql/mysql-cluster:8.0
+    ports:
+      - "2203:3306"
+    volumes:
+       - ./mysql.conf/my.cnf:/etc/my.cnf
+       - ./mysql.conf/mysql-cluster.cnf:/etc/mysql-cluster.cnf
+       - /etc/localtime:/etc/localtime:ro
+       - ./data/mysql2:/var/lib/mysql
+#    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: bdteste
+      MYSQL_USER: teste
+      MYSQL_PASSWORD: teste
+      MYSQL_ROOT_HOST: '%'
+    #command: bash -c 'sleep 60; exec mysqld'
+    command: mysqld
+    depends_on:
+      - "management"
+      - "ndb1"
+      - "ndb2"
+      - "ndb3"
+      - "ndb4"
+    networks:
+      mysqlcluster:
+#        ipv4_address: 192.168.0.10
+        ipv4_address: 172.28.0.13
+
   adminer:
     image: adminer
     restart: always
     ports:
-      - 8081:8080
+      - 8888:8080
     links:
       - mysql1:db
     networks:
